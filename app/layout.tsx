@@ -1,30 +1,70 @@
-import './globals.css';
+import type { Metadata, Viewport } from 'next'
+import { Inter as FontSans } from 'next/font/google'
+import { GeistSans } from 'geist/font/sans'
+import './globals.css'
+import { cn } from '@/lib/utils'
+import { ThemeProvider } from '@/components/theme-provider'
+import Header from '@/components/header'
+import Footer from '@/components/footer'
+import { Sidebar } from '@/components/sidebar'
+import { Toaster } from '@/components/ui/sonner'
+import { AppStateProvider } from '@/lib/utils/app-state'
 
-import { GeistSans } from 'geist/font/sans';
+const fontSans = FontSans({
+  subsets: ['latin'],
+  variable: '--font-sans'
+})
 
-let title = 'Next.js + Postgres Auth Starter';
-let description =
-  'This is a Next.js starter kit that uses NextAuth.js for simple email + password login and a Postgres database to persist the data.';
+const title = 'Morphic Auth Starter'
+const description =
+  'A fully open-source AI-powered answer engine with a generative UI, using NextAuth.js for simple email + password login and a Postgres database to persist the data.'
 
-export const metadata = {
+export const metadata: Metadata = {
+  metadataBase: new URL('https://morphic.sh'),
   title,
   description,
+  openGraph: {
+    title,
+    description
+  },
   twitter: {
-    card: 'summary_large_image',
     title,
     description,
-  },
-  metadataBase: new URL('https://nextjs-postgres-auth.vercel.app'),
-};
+    card: 'summary_large_image',
+    creator: '@miiura'
+  }
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  minimumScale: 1,
+  maximumScale: 1
+}
 
 export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+  children
+}: Readonly<{
+  children: React.ReactNode
+}>) {
   return (
-    <html lang="en">
-      <body className={GeistSans.variable}>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body className={cn('font-sans antialiased', fontSans.variable, GeistSans.variable)}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AppStateProvider>
+            <Header />
+            {children}
+            <Sidebar />
+            <Footer />
+            <Toaster />
+          </AppStateProvider>
+        </ThemeProvider>
+      </body>
     </html>
-  );
+  )
 }
